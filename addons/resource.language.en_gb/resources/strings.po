@@ -17533,6 +17533,12 @@ msgctxt "#35236"
 msgid "In this release, only controllers can be used to play games."
 msgstr ""
 
+#. Label of the button in the in-game menu for rewinding the game
+#: addons/skin.estuary/xml/GameOSD.xml
+msgctxt "#35237"
+msgid "Rewind"
+msgstr ""
+
 #empty strings from id 35237 to 35249
 
 #: xbmc/windows/GUIMediaWindow.cpp

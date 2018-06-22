@@ -416,7 +416,22 @@ bool CRetroPlayer::OnAction(const CAction &action)
       CloseOSD();
       return true;
     }
+    break;
   }
+  /*
+  case ACTION_PLAYER_FORWARD:
+  case ACTION_PLAYER_REWIND:
+  {
+    //! @todo
+    return true;
+  }
+  case ACTION_ANALOG_REWIND:
+  case ACTION_ANALOG_FORWARD:
+  {
+    //! @todo
+    return true;
+  }
+  */
   default:
     break;
   }

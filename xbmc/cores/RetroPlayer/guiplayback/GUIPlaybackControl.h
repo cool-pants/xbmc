@@ -34,6 +34,7 @@ namespace RETRO
       FULLSCREEN,
       MENU_PAUSED,
       MENU_PLAYING,
+      MENU_REWINDING,
     };
 
     // Helper functions

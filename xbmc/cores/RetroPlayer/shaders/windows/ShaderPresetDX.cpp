@@ -399,7 +399,12 @@ bool CShaderPresetDX::CreateLayouts()
       { "TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 }
     };
 
-    if (!videoShader->CreateInputLayout(layout, ARRAYSIZE(layout)))
+    //! @todo
+    CShaderDX* videoShaderDx = dynamic_cast<CShaderDX*>(videoShader.get());
+    if (videoShaderDx == nullptr)
+      return false;
+
+    if (!videoShaderDx->CreateInputLayout(layout, ARRAYSIZE(layout)))
     {
       CLog::Log(LOGERROR, __FUNCTION__": Failed to create input layout for Input Assembler.");
       return false;

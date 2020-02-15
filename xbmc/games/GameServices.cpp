@@ -10,6 +10,7 @@
 #include "cores/RetroPlayer/shaders/ShaderPresetFactory.h"
 #include "controllers/Controller.h"
 #include "controllers/ControllerManager.h"
+#include "datastore/DataStore.h"
 #include "games/GameSettings.h"
 #include "profiles/ProfileManager.h"
 
@@ -1027,7 +1028,8 @@ CGameServices::CGameServices(CControllerManager &controllerManager,
   m_gameRenderManager(renderManager),
   m_profileManager(profileManager),
   m_gameSettings(new CGameSettings()),
-  m_videoShaders(new SHADER::CShaderPresetFactory(addons, binaryAddons))
+  m_videoShaders(new SHADER::CShaderPresetFactory(addons, binaryAddons)),
+  m_dataStore(new DATASTORE::CDataStore(profileManager))
 {
   // Filecoin test
   const std::string dataStorePath = CSpecialProtocol::TranslatePath(profileManager.GetDataStoreFolder());

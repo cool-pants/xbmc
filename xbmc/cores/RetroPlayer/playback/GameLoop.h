@@ -54,6 +54,7 @@ public:
   }
   void SetSpeed(double speedFactor);
   void PauseAsync();
+  void StepAsync();
 
 protected:
   // implementation of CThread
@@ -69,6 +70,7 @@ private:
   std::atomic<double> m_speedFactor;
   double m_lastFrameMs;
   mutable double m_adjustTime;
+  bool m_bStepping = false;
   CEvent m_sleepEvent;
 };
 } // namespace RETRO

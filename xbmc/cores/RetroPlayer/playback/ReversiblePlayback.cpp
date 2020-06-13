@@ -109,6 +109,11 @@ void CReversiblePlayback::PauseAsync()
 
 std::string CReversiblePlayback::CreateSavestate()
 {
+  // Register handler for video memory
+
+  // Step a frame for video memory
+  m_gameLoop.StepAsync();
+
   const size_t memorySize = m_gameClient->SerializeSize();
 
   // Game client must support serialization
@@ -159,6 +164,8 @@ std::string CReversiblePlayback::CreateSavestate()
   }
 
   savestate->Finalize();
+
+  // Wait until video memory has arrived
 
   if (!m_savestateDatabase->AddSavestate(m_gameClient->GetGamePath(), *savestate))
     return "";

@@ -56,6 +56,13 @@ void CGameLoop::PauseAsync()
   SetSpeed(0.0);
 }
 
+void CGameLoop::StepAsync()
+{
+  m_bStepping = true;
+
+  m_sleepEvent.Set();
+}
+
 void CGameLoop::Process(void)
 {
   while (!m_bStop)
@@ -89,6 +96,10 @@ void CGameLoop::Process(void)
       // Sleep at least 1 ms to avoid sleeping forever
       while (sleepTimeMs > 1.0)
       {
+        // If stepping, advance to the next frame now
+        if (m_bStepping)
+          break;
+
         m_sleepEvent.WaitMSec(static_cast<unsigned int>(sleepTimeMs));
 
         if (m_bStop)
@@ -97,6 +108,8 @@ void CGameLoop::Process(void)
         // Speed may have changed, update sleep time
         sleepTimeMs = SleepTimeMs();
       }
+
+      m_bStepping = false;
     }
   }
 }

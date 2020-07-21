@@ -17,6 +17,7 @@ CGameSettings &CGameSettings::operator=(const CGameSettings &rhs)
     m_videoFilter = rhs.m_videoFilter;
     m_stretchMode = rhs.m_stretchMode;
     m_rotationDegCCW = rhs.m_rotationDegCCW;
+    m_saveDate = rhs.m_saveDate;
   }
   return *this;
 }
@@ -26,6 +27,7 @@ void CGameSettings::Reset()
   m_videoFilter.clear();
   m_stretchMode = RETRO::STRETCHMODE::Normal;
   m_rotationDegCCW = 0;
+  m_saveDate = "";
 }
 
 bool CGameSettings::operator==(const CGameSettings &rhs) const
@@ -58,6 +60,15 @@ void CGameSettings::SetRotationDegCCW(unsigned int rotation)
   if (rotation != m_rotationDegCCW)
   {
     m_rotationDegCCW = rotation;
+    SetChanged();
+  }
+}
+
+void CGameSettings::SetGameSaveDate(const std::string& saveDate)
+{
+  if (saveDate != m_saveDate)
+  {
+    m_saveDate = saveDate;
     SetChanged();
   }
 }

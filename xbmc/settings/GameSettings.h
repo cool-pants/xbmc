@@ -36,13 +36,9 @@ public:
   unsigned int RotationDegCCW() const { return m_rotationDegCCW; }
   void SetRotationDegCCW(unsigned int rotation);
 
-  unsigned int GameSaveDate() const { return m_saveDate; }
-  void SetGameSaveDate(const std::string& date);
-
 private:
   // Video settings
   std::string m_videoFilter;
   KODI::RETRO::STRETCHMODE m_stretchMode;
   unsigned int m_rotationDegCCW;
-  std::string m_saveDate;
 };

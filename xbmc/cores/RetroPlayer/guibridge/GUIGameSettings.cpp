@@ -61,11 +61,9 @@ void CGUIGameSettings::UpdateSettings()
   std::string videoFilter = m_guiSettings.VideoFilter();
   STRETCHMODE stretchMode = m_guiSettings.StretchMode();
   unsigned int rotationDegCCW = m_guiSettings.RotationDegCCW();
-  const std::string& saveDate = m_guiSettings.GameSaveDate();
 
   // Save settings for renderer
   m_renderSettings.VideoSettings().SetVideoFilter(videoFilter);
   m_renderSettings.VideoSettings().SetRenderStretchMode(stretchMode);
   m_renderSettings.VideoSettings().SetRenderRotation(rotationDegCCW);
-  m_renderSettings.VideoSettings().SetGameSaveDate(saveDate);
 }

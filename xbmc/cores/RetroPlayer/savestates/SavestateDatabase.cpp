@@ -156,8 +156,6 @@ bool CSavestateDatabase::GetSavestatesNav(CFileItemList& items,
     }
 
     items[i]->SetIconImage(MakeThumbnailPath(items[i]->GetPath()));
-
-    items[i]->SetProperty("game.savedate", created.GetAsLocalizedDateTime());
   }
 
   return true;

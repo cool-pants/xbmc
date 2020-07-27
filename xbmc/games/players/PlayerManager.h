@@ -19,9 +19,12 @@
  */
 #pragma once
 
+#include "games/addons/GameClientSubsystem.h"
 #include "input/keyboard/interfaces/IKeyboardDriverHandler.h"
 #include "input/mouse/interfaces/IMouseDriverHandler.h"
+#include "addons/kodi-addon-dev-kit/include/kodi/kodi_game_types.h"
 #include "peripherals/PeripheralTypes.h"
+#include "peripherals/Peripherals.h"
 #include "utils/Observer.h"
 
 #include <set>
@@ -72,6 +75,10 @@ public:
   bool OnPosition(int x, int y) override;
   bool OnButtonPress(MOUSE::BUTTON_ID button) override;
   void OnButtonRelease(MOUSE::BUTTON_ID button) override;
+  //void GetPeripheralPort();
+
+  bool OpenKeyboard(CGameClientSubsystem& gameSub, ControllerPtr controller, AddonInstance_Game& m_struct, PERIPHERALS::PeripheralVector& keyboards);
+  bool OpenMouse(CGameClientSubsystem& gameSub, ControllerPtr controller, AddonInstance_Game& m_struct, PERIPHERALS::PeripheralVector& mice);
 
 private:
   void OnJoystickEvent();

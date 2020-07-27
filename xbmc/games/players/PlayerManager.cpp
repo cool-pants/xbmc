@@ -20,7 +20,29 @@
 
 #include "PlayerManager.h"
 #include "input/InputManager.h"
+#include "ServiceBroker.h"
+#include "peripherals/devices/Peripheral.h"
 #include "peripherals/Peripherals.h"
+#include "games/addons/GameClient.h"
+//#include "games/controllers/ControllerTypes.h"
+#include "addons/kodi-addon-dev-kit/include/kodi/kodi_game_types.h"
+#include "games/addons/input/GameClientInput.h"
+#include "games/addons/input/GameClientController.h"
+#include "games/addons/input/GameClientHardware.h"
+#include "games/addons/input/GameClientJoystick.h"
+#include "games/addons/input/GameClientKeyboard.h"
+#include "games/addons/input/GameClientMouse.h"
+#include "games/addons/input/GameClientPort.h"
+#include "games/addons/input/GameClientTopology.h"
+#include "games/GameServices.h"
+#include "games/addons/GameClient.h"
+#include "games/addons/GameClientCallbacks.h"
+#include "games/controllers/Controller.h"
+#include "games/controllers/ControllerTopology.h"
+#include "input/joysticks/JoystickTypes.h"
+#include "peripherals/EventLockHandle.h"
+#include "threads/SingleLock.h"
+#include "utils/log.h"
 
 using namespace KODI;
 using namespace GAME;
@@ -55,6 +77,62 @@ void CPlayerManager::Notify(const Observable& obs, const ObservableMessage msg)
     break;
   }
 }
+
+bool CPlayerManager::OpenKeyboard(CGameClientSubsystem& gameSub, ControllerPtr controller, 
+                                  AddonInstance_Game& m_struct, PERIPHERALS::PeripheralVector& keyboards)
+{
+  CServiceBroker::GetPeripherals().GetPeripheralsWithFeature(keyboards,
+                                                             PERIPHERALS::FEATURE_KEYBOARD);
+  if (keyboards.empty())
+    return false;
+
+  bool bSuccess = false;
+
+  {
+    CSingleLock lock(gameSub.GetAccess());
+
+    if (gameSub.GetClient().Initialized())
+    {
+      try
+      {
+        bSuccess = m_struct.toAddon.EnableKeyboard(true, controller->ID().c_str());
+      }
+      catch (...)
+      {
+        gameSub.GetClient().LogException("EnableKeyboard()");
+      }
+    }
+  }
+  return bSuccess;
+}
+
+bool CPlayerManager::OpenMouse(CGameClientSubsystem& gameSub, ControllerPtr controller, 
+                                  AddonInstance_Game& m_struct, PERIPHERALS::PeripheralVector& mice)
+{
+  CServiceBroker::GetPeripherals().GetPeripheralsWithFeature(mice, PERIPHERALS::FEATURE_MOUSE);
+  if (mice.empty())
+    return false;
+
+  bool bSuccess = false;
+
+  {
+    CSingleLock lock(gameSub.GetAccess());
+
+    if (gameSub.GetClient().Initialized())
+    {
+      try
+      {
+        bSuccess = m_struct.toAddon.EnableMouse(true, controller->ID().c_str());
+      }
+      catch (...)
+      {
+        gameSub.GetClient().LogException("EnableMouse()");
+      }
+    }
+  }
+  return bSuccess;
+}
+
 
 bool CPlayerManager::OnKeyPress(const CKey& key)
 {
@@ -92,6 +170,11 @@ void CPlayerManager::OnJoystickEvent()
   PeripheralVector peripherals;
   m_peripheralManager.GetPeripheralsWithFeature(peripherals, FEATURE_JOYSTICK);
 }
+
+// int CPlayerManager::GetPeripheralPort(PERIPHERALS::PeripheralVector peripherals)
+// {
+  
+// }
 
 void CPlayerManager::OnKeyboardAction()
 {

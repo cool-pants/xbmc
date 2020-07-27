@@ -34,14 +34,13 @@ struct GameClientSubsystems
  */
 class CGameClientSubsystem
 {
-protected:
+public:
   CGameClientSubsystem(CGameClient& gameClient,
                        AddonInstance_Game& addonStruct,
                        CCriticalSection& clientAccess);
-
+  
   virtual ~CGameClientSubsystem();
-
-public:
+  
   /*!
    * \brief Create a struct with the allocated subsystems
    *
@@ -61,6 +60,12 @@ public:
    * \param subsystems The subsystems created by CreateSubsystems()
    */
   static void DestroySubsystems(GameClientSubsystems& subsystems);
+
+  //Get info
+  CGameClient& GetClient() const;
+  AddonInstance_Game& GetInstance() const;
+  CCriticalSection& GetAccess() const;
+
 
 protected:
   // Subsystems

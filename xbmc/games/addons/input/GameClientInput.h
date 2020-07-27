@@ -9,8 +9,11 @@
 #pragma once
 
 #include "games/addons/GameClientSubsystem.h"
+#include "games/GameServices.h"
 #include "games/controllers/ControllerTypes.h"
+#include "games/players/PlayerManager.h"
 #include "games/controllers/types/ControllerTree.h"
+#include "addons/kodi-addon-dev-kit/include/kodi/kodi_game_types.h"
 #include "peripherals/PeripheralTypes.h"
 #include "utils/Observer.h"
 
@@ -114,9 +117,11 @@ private:
   ControllerLayoutMap m_controllerLayouts;
   JoystickMap m_joysticks;
   PortMap m_portMap;
+  AddonInstance_Game m_addonStruct;
   std::unique_ptr<CGameClientKeyboard> m_keyboard;
   std::unique_ptr<CGameClientMouse> m_mouse;
   std::unique_ptr<CGameClientHardware> m_hardware;
+
 };
 } // namespace GAME
 } // namespace KODI

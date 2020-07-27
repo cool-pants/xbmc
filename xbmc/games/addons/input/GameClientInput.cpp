@@ -21,6 +21,7 @@
 #include "games/addons/GameClientCallbacks.h"
 #include "games/controllers/Controller.h"
 #include "games/controllers/ControllerTopology.h"
+#include "games/players/PlayerManager.h"
 #include "input/joysticks/JoystickTypes.h"
 #include "peripherals/EventLockHandle.h"
 #include "peripherals/Peripherals.h"
@@ -38,6 +39,7 @@ CGameClientInput::CGameClientInput(CGameClient& gameClient,
     : CGameClientSubsystem(gameClient, addonStruct, clientAccess)
     , m_topology(new CGameClientTopology)
 {
+  m_addonStruct = addonStruct;
 }
 
 CGameClientInput::~CGameClientInput()
@@ -150,6 +152,7 @@ bool CGameClientInput::HasFeature(const std::string& controllerId,
   return bHasFeature;
 }
 
+
 bool CGameClientInput::AcceptsInput() const
 {
   if (m_inputCallback != nullptr)
@@ -162,9 +165,11 @@ bool CGameClientInput::InputEvent(const game_input_event& event)
 {
   bool bHandled = false;
 
+  //CControllerPortNode *port;
   try
   {
     bHandled = m_struct.toAddon.InputEvent(&event);
+    CLog::Log(LOGDEBUG, "Input Event : %s", event.feature_name);
   }
   catch (...)
   {
@@ -334,30 +339,10 @@ bool CGameClientInput::OpenKeyboard(const ControllerPtr& controller)
 
   //! @todo Move to player manager
   PERIPHERALS::PeripheralVector keyboards;
-  CServiceBroker::GetPeripherals().GetPeripheralsWithFeature(keyboards,
-                                                             PERIPHERALS::FEATURE_KEYBOARD);
-  if (keyboards.empty())
-    return false;
+  CGameServices& gameServices = CServiceBroker::GetGameServices();
+  CPlayerManager player = gameServices.PlayerManager(); 
 
-  bool bSuccess = false;
-
-  {
-    CSingleLock lock(m_clientAccess);
-
-    if (m_gameClient.Initialized())
-    {
-      try
-      {
-        bSuccess = m_struct.toAddon.EnableKeyboard(true, controller->ID().c_str());
-      }
-      catch (...)
-      {
-        m_gameClient.LogException("EnableKeyboard()");
-      }
-    }
-  }
-
-  if (bSuccess)
+  if (player.OpenKeyboard(CGameClientSubsystem(m_gameClient, m_addonStruct, m_clientAccess), controller, m_struct, keyboards))
   {
     m_keyboard.reset(
         new CGameClientKeyboard(m_gameClient, controller->ID(), keyboards.at(0).get()));
@@ -400,31 +385,13 @@ bool CGameClientInput::OpenMouse(const ControllerPtr& controller)
 
   //! @todo Move to player manager
   PERIPHERALS::PeripheralVector mice;
-  CServiceBroker::GetPeripherals().GetPeripheralsWithFeature(mice, PERIPHERALS::FEATURE_MOUSE);
-  if (mice.empty())
-    return false;
+  CGameServices& gameServices = CServiceBroker::GetGameServices();
+  CPlayerManager player = gameServices.PlayerManager(); 
 
-  bool bSuccess = false;
-
+  if (player.OpenKeyboard(CGameClientSubsystem(m_gameClient, m_addonStruct, m_clientAccess), controller, m_struct, mice))
   {
-    CSingleLock lock(m_clientAccess);
-
-    if (m_gameClient.Initialized())
-    {
-      try
-      {
-        bSuccess = m_struct.toAddon.EnableMouse(true, controller->ID().c_str());
-      }
-      catch (...)
-      {
-        m_gameClient.LogException("EnableMouse()");
-      }
-    }
-  }
-
-  if (bSuccess)
-  {
-    m_mouse.reset(new CGameClientMouse(m_gameClient, controller->ID(), mice.at(0).get()));
+    m_keyboard.reset(
+        new CGameClientKeyboard(m_gameClient, controller->ID(), mice.at(0).get()));
     return true;
   }
 
@@ -471,7 +438,8 @@ bool CGameClientInput::OpenJoystick(const std::string& portAddress, const Contro
               controller->ID().c_str(), portAddress.c_str());
     return false;
   }
-
+  CLog::Log(LOGDEBUG, "Controller \"%s\" on port \"%s\"",
+              controller->ID().c_str(), portAddress.c_str());
   bool bSuccess = false;
 
   {

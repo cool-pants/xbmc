@@ -61,3 +61,18 @@ CGameClientStreams& CGameClientSubsystem::Streams() const
 {
   return m_gameClient.Streams();
 }
+
+CGameClient& CGameClientSubsystem::GetClient() const
+{
+  return m_gameClient;
+}
+
+AddonInstance_Game& CGameClientSubsystem::GetInstance() const
+{
+  return m_struct;
+}
+
+CCriticalSection& CGameClientSubsystem::GetAccess() const
+{
+  return m_clientAccess;
+}

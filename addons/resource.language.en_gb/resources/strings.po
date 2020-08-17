@@ -17536,7 +17536,13 @@ msgctxt "#35237"
 msgid "Max players: {0:d}"
 msgstr ""
 
-#empty strings from id 35238 to 35249
+#. Window in the Player Dialog that allows to change controllers.
+#: addons/skin.estuary/xml/DialogControllerSelect.xml
+msgctxt "#35238"
+msgid "Press any key on the controller you want to switch to."
+msgstr ""
+
+#empty strings from id 35239 to 35249
 
 #: xbmc/windows/GUIMediaWindow.cpp
 msgctxt "#35250"

@@ -63,6 +63,7 @@ public:
 
   // Topology functions
   const CControllerTree& GetControllerTree() const;
+  void CGameClientInput::Joystick(CControllerTree controllers);
   bool SupportsKeyboard() const;
   bool SupportsMouse() const;
 

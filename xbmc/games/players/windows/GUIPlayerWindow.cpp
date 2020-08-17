@@ -25,6 +25,7 @@
 #include "addons/BinaryAddonCache.h"
 #include "cores/RetroPlayer/guibridge/GUIGameRenderManager.h"
 #include "cores/RetroPlayer/guibridge/GUIGameSettingsHandle.h"
+#include "games/GameServices.h"
 #include "games/addons/GameClient.h"
 #include "games/addons/input/GameClientInput.h"
 #include "games/controllers/types/ControllerGrid.h"
@@ -98,6 +99,12 @@ void CGUIPlayerWindow::OnInitWindow()
   m_controllerPanel = dynamic_cast<IControllerPanel*>(GetControl(CONTROL_CONTROLLER_PANEL));
 
   GameClientPtr gameClient = GetGameClient();
+
+  // CGameClientInput clientInput(gameClient, , );
+  //Run Setjoystick here somehow
+
+  gameClient->Input().Joystick(gameClient->Input().GetControllerTree());
+  
 
   if (gameClient)
   {

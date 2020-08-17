@@ -207,8 +207,6 @@ bool CGUIConfigurationWizard::MapPrimitive(JOYSTICK::IButtonMap* buttonMap,
   // Abort if another controller cancels the prompt
   if (IsMapping() && !IsMapping(buttonMap->Location()))
   {
-    //! @todo This only succeeds for game.controller.default; no actions are
-    //        currently defined for other controllers
     if (keymap)
     {
       std::string feature;
@@ -448,6 +446,8 @@ bool CGUIConfigurationWizard::IsMapping() const
 
 bool CGUIConfigurationWizard::IsMapping(const std::string& location) const
 {
+  CLog::Log(LOGDEBUG, "Location of button press : %s", location);
+  CLog::Log(LOGDEBUG, "Default        Location  : %s", m_location);
   return m_location == location;
 }
 

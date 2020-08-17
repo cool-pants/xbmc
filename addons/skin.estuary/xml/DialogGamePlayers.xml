@@ -11,7 +11,7 @@
 			<include content="DialogBackgroundCommons">
 				<param name="width" value="1820" />
 				<param name="height" value="980" />
-				<param name="header_label" value="$LOCALIZE[35151]" />
+				<param name="header_label" value="$LOCALIZE[35237]" />
 				<param name="header_id" value="1" />
 			</include>
 			<control type="group">
@@ -52,7 +52,7 @@
 							<right>-20</right>
 							<texture border="40">buttons/dialogbutton-nofo.png</texture>
 						</control>
-						<!-- -->
+						<! -->
 						<control type="playerlist" id="4">
 							<description>Player list</description>
 							<onup></onup>
@@ -68,6 +68,7 @@
 									<left>14</left>
 									<right>14</right>
 									<texture>$INFO[ListItem.Icon]</texture>
+									<onclick>ActivateWindow(ControllerSelect)</onclick>
 								</control>
 							</itemlayout>
 							<focusedlayout width="540" height="540">

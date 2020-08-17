@@ -85,21 +85,23 @@ void CGameClientInput::Start(IGameInputCallback* input)
   }
 
   // Open joysticks
-  //! @todo Move to player manager
-  for (const auto& port : controllers.Ports())
-  {
-    if (port.PortType() == PORT_TYPE::CONTROLLER && !port.CompatibleControllers().empty())
-    {
-      ControllerPtr controller = port.ActiveController().Controller();
-      OpenJoystick(port.Address(), controller);
-    }
-  }
+  CGameServices& gameServices = CServiceBroker::GetGameServices();
+  CPlayerManager player = gameServices.PlayerManager();
+  player.SetJoystick(controllers, CGameClientSubsystem(m_gameClient, m_addonStruct, m_clientAccess), m_addonStruct);
+
 
   // Ensure hardware is open to receive events
   m_hardware.reset(new CGameClientHardware(m_gameClient));
 
   if (CServiceBroker::IsServiceManagerUp())
     CServiceBroker::GetPeripherals().RegisterObserver(this);
+}
+
+void CGameClientInput::Joystick(CControllerTree controllers)
+{
+  CGameServices& gameServices = CServiceBroker::GetGameServices();
+  CPlayerManager player = gameServices.PlayerManager();
+  player.SetJoystick(controllers, CGameClientSubsystem(m_gameClient, m_addonStruct, m_clientAccess), m_addonStruct);
 }
 
 void CGameClientInput::Deinitialize()
@@ -432,38 +434,15 @@ bool CGameClientInput::OpenJoystick(const std::string& portAddress, const Contro
   const CControllerTree& controllerTree = m_topology->ControllerTree();
 
   const CControllerPortNode& port = controllerTree.GetPort(portAddress);
-  if (!port.IsControllerAccepted(portAddress, controller->ID()))
-  {
-    CLog::Log(LOGERROR, "Failed to open port: Invalid controller \"%s\" on port \"%s\"",
-              controller->ID().c_str(), portAddress.c_str());
-    return false;
-  }
-  CLog::Log(LOGDEBUG, "Controller \"%s\" on port \"%s\"",
-              controller->ID().c_str(), portAddress.c_str());
-  bool bSuccess = false;
+  CGameServices& gameServices = CServiceBroker::GetGameServices();
+  CPlayerManager player = gameServices.PlayerManager(); 
 
-  {
-    CSingleLock lock(m_clientAccess);
-
-    if (m_gameClient.Initialized())
-    {
-      try
-      {
-        bSuccess =
-            m_struct.toAddon.ConnectController(true, portAddress.c_str(), controller->ID().c_str());
-      }
-      catch (...)
-      {
-        m_gameClient.LogException("ConnectController()");
-      }
-    }
-  }
-
-  if (bSuccess)
+  if (player.OpenJoystick(portAddress, controller, port, CGameClientSubsystem(m_gameClient, m_addonStruct, m_clientAccess), m_struct))
   {
     PERIPHERALS::EventLockHandlePtr lock = CServiceBroker::GetPeripherals().RegisterEventLock();
 
     m_joysticks[portAddress].reset(new CGameClientJoystick(m_gameClient, portAddress, controller));
+    CLog::Log(LOGDEBUG, "PORT :  \"%s\"", portAddress.c_str()); 
     ProcessJoysticks();
 
     return true;
@@ -523,6 +502,7 @@ bool CGameClientInput::ReceiveInputEvent(const game_input_event& event)
   default:
     break;
   }
+  CLog::Log(LOGDEBUG,"The input comes from port  :  ", event.port_address);
 
   return bHandled;
 }

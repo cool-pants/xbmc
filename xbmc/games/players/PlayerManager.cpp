@@ -26,7 +26,6 @@
 #include "games/addons/GameClient.h"
 //#include "games/controllers/ControllerTypes.h"
 #include "addons/kodi-addon-dev-kit/include/kodi/kodi_game_types.h"
-#include "games/addons/input/GameClientInput.h"
 #include "games/addons/input/GameClientController.h"
 #include "games/addons/input/GameClientHardware.h"
 #include "games/addons/input/GameClientJoystick.h"
@@ -133,6 +132,50 @@ bool CPlayerManager::OpenMouse(CGameClientSubsystem& gameSub, ControllerPtr cont
   return bSuccess;
 }
 
+void CPlayerManager::SetJoystick(CControllerTree controllers, CGameClientSubsystem& gamesub, AddonInstance_Game& addonStruct)
+{
+  CGameClientInput inputClient(gamesub.GetClient(),addonStruct,gamesub.GetAccess());
+  for (const auto& port : controllers.Ports())
+  {
+    if (port.PortType() == PORT_TYPE::CONTROLLER && !port.CompatibleControllers().empty())
+    {
+      ControllerPtr controller = port.ActiveController().Controller();
+      inputClient.OpenJoystick(port.Address(), controller);
+    }
+  }
+}
+
+bool CPlayerManager::OpenJoystick(const std::string& portAddress, const ControllerPtr& controller, CControllerPortNode port, 
+                                  CGameClientSubsystem& gameSub, AddonInstance_Game& m_struct)
+{
+  if (!port.IsControllerAccepted(portAddress, controller->ID()))
+  {
+    CLog::Log(LOGERROR, "Failed to open port: Invalid controller \"%s\" on port \"%s\"",
+              controller->ID().c_str(), portAddress.c_str());
+    return false;
+  }
+  CLog::Log(LOGDEBUG, "Controller \"%s\" on port \"%s\"",
+              controller->ID().c_str(), portAddress.c_str());
+  bool bSuccess = false;
+
+  {
+    CSingleLock lock(gameSub.GetAccess());
+
+    if (gameSub.GetClient().Initialized())
+    {
+      try
+      {
+        bSuccess =
+            m_struct.toAddon.ConnectController(true, portAddress.c_str(), controller->ID().c_str());
+      }
+      catch (...)
+      {
+        gameSub.GetClient().LogException("ConnectController()");
+      }
+    }
+  }
+  return bSuccess;
+}
 
 bool CPlayerManager::OnKeyPress(const CKey& key)
 {

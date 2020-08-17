@@ -20,6 +20,8 @@
 #pragma once
 
 #include "games/addons/GameClientSubsystem.h"
+#include "games/controllers/types/ControllerTree.h"
+#include "games/addons/input/GameClientInput.h"
 #include "input/keyboard/interfaces/IKeyboardDriverHandler.h"
 #include "input/mouse/interfaces/IMouseDriverHandler.h"
 #include "addons/kodi-addon-dev-kit/include/kodi/kodi_game_types.h"
@@ -79,6 +81,9 @@ public:
 
   bool OpenKeyboard(CGameClientSubsystem& gameSub, ControllerPtr controller, AddonInstance_Game& m_struct, PERIPHERALS::PeripheralVector& keyboards);
   bool OpenMouse(CGameClientSubsystem& gameSub, ControllerPtr controller, AddonInstance_Game& m_struct, PERIPHERALS::PeripheralVector& mice);
+  bool OpenJoystick(const std::string& portAddress, const ControllerPtr& controller, CControllerPortNode port, 
+                    CGameClientSubsystem& gameSub, AddonInstance_Game& m_struct);
+  void SetJoystick(CControllerTree controllers, CGameClientSubsystem& gameSub, AddonInstance_Game& addonStruct);
 
 private:
   void OnJoystickEvent();

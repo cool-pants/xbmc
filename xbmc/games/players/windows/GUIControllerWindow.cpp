@@ -94,7 +94,6 @@ bool CGUIControllerWindow::OnMessage(CGUIMessage& message)
 void CGUIControllerWindow::OnInitWindow()
 {
   
-
   CGUIDialog::OnInitWindow();
 }
 
